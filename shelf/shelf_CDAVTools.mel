@@ -1,4 +1,4 @@
-global proc shelf_MPTools () {
+global proc shelf_CDAVTools () {
     global string $gBuffStr;
     global string $gBuffStr0;
     global string $gBuffStr1;
@@ -14,29 +14,30 @@ global proc shelf_MPTools () {
         -manage 1
         -visible 1
         -preventOverride 0
-        -annotation "Test script" 
+        -annotation "Configure Render" 
         -enableBackground 0
         -backgroundColor 0 0 0 
         -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
-        -label "Test script" 
+        -label "CfgRdr" 
         -labelOffset 0
         -rotation 0
         -flipX 0
         -flipY 0
         -useAlpha 1
         -font "plainLabelFont" 
-        -imageOverlayLabel "Test" 
+        -imageOverlayLabel "Config Render" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.5 
-        -image "commandButton.png" 
-        -image1 "commandButton.png" 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
         -style "iconOnly" 
         -marginWidth 1
         -marginHeight 1
-        -command "import cdavtools.python\ncdavtools.python.testscript.hello()\n" 
+        -command "import cdavtools\ncdavtools.python.render_setup.configureRender()\n" 
         -sourceType "python" 
         -commandRepeatable 1
         -flat 1
     ;
-}
+
+} 
