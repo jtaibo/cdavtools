@@ -82,8 +82,7 @@ for seq in sequence_dirs:
 ###############################################################################
 
 for scene in scenes_list:
-    ext = "avi"
-    output_file = os.path.splitext(os.path.basename(scene))[0] + "." + ext
+    output_file = os.path.splitext(os.path.basename(scene))[0]
 
     output_path = "X:/tmp/test_playblast/" + output_file
     print("Generating playblast for scene %s in %s..."%(scene, output_file))
