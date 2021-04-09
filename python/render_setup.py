@@ -63,23 +63,24 @@ def configureDenoising():
     cmd.setAttr("defaultArnoldRenderOptions.denoiseBeauty", 0)    # Disable OptiX denoiser (just in case...)
     cmd.setAttr("defaultArnoldRenderOptions.outputVarianceAOVs", 1)    # Enable Arnold Denoiser AOVs
 
-    return
-    # TO-DO: Add drivers for denoising other AOVs
+    # Update current AOVs dictionary
+    updateAOVDict()
+
+    # Add drivers for denoising additional (non-beauty) AOVs
     # More information in
     #    https://arnoldsupport.com/2021/03/22/mtoa-denoising-aovs-with-the-arnold-denoiser/   
     for aov in denoised_aovs:
         if aov in aov_dict:
             node = aov_dict[aov]
-            # WARNING: This code is experimental. It may not work (options don't show correctly in Render Settings window)
             print("Configuring denoising for AOV %s (node %s)"%(aov, node))
-"""
             # Add new output driver
             cmd.connectAttr("defaultArnoldDriver.message", node + ".outputs[1].driver")
             # Add new AOV filter and set type to "variance"
-            filter = cmd.createNode("aiAOVFilter")
-            cmd.setAttr(filter+".ai_translator", "variance", type="string") 
-            cmd.connectAttr(filter+".message", node + ".outputs[1].filter")
-"""
+            variance_filter = cmd.createNode("aiAOVFilter")
+            cmd.setAttr(variance_filter + ".ai_translator", "variance", type="string")
+            # NOTE: Maybe the same variance_filter node could be used for all the AOVs
+            cmd.connectAttr(variance_filter + ".message", node + ".outputs[1].filter")
+
     # NOTE: All these AOVs should be passed to noice as "light group AOVs" in denoising script (outside Maya)
 
 
