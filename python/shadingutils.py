@@ -94,7 +94,8 @@ def getPerFaceMaterialAssignment(transf, shape):
             members = cmd.sets(sg, q=True)
             if members:
                 for item in members:
-                    if transf in item:
+                    # WARNING: delimit node name (with string-start, "|", or ".") to avoid wrongly identify nodes with names that are a superset of the one we are searching
+                    if ("|"+transf+"|") in item or item.startswith(transf+"|") or ("|"+transf+".") in item or item.startswith(transf+"."):
                          faces.append(item)
             if faces:
                 mat2face[sg] = faces
@@ -115,7 +116,7 @@ def reassignPerFaceMaterialsToInstances(transform, shape, all_shape_instances):
         mat2face = getPerFaceMaterialAssignment(transform, shape)
     # For each instane of the shape...
     for s in all_shape_instances:
-        if not transform in s:  # ...except the original (selected) one, of course
+        if not ("|"+transform+"|") in s and not s.startswith(transform+"|"):  # ...except the original (selected) one, of course
             if len(mat2face) == 1:
                 # Per object material assignment (or some faces with no material)
                 sg = mat2face.keys()[0]
