@@ -1,6 +1,24 @@
 @echo off
 call env.bat
 
+REM Replace the value of variables declared in the lines below with :
+REM
+REM     INPUT_FRAMES - Prefix path of renders
+REM         e.g.: D:/Google Drive/Almacen/CDAV/Materiales&Iluminacion/maya_projects/MEI/02_prod/images/pruebarapida/pruebarapida.0001.exr
+REM
+REM     FRAME_START - 4-digit start frame
+REM     FRAME_END   - 4-digit end frame
+REM
+REM NOTE: Padding is assumed to be 4 digits in all renders
+REM
+REM     EXTRA_FRAMES, SEARCH_RADIUS, PATCH_RADIUS, VARIANCE_THRESHOLD are values set in "Arnold > Utilities > Arnold denoiser (noice)" window in Maya
+REM
+REM     For more information about these parameters, read the Arnold denoiser documentation in
+REM         https://docs.arnoldrenderer.com/pages/viewpage.action?pageId=76316887
+REM
+REM     EXTRA_AOVS  - additional (to beauty) AOVs to denoise. Each AOV must be preceded by "-l" as in the example below
+REM
+
 set INPUT_FRAMES="D:/Google Drive/Almacen/CDAV/Materiales&Iluminacion/maya_projects/MEI/02_prod/images/pruebarapida/pruebarapida"
 set OUTPUT_FRAMES_SUFFIX="_denoised"
 set FRAME_START=0001
