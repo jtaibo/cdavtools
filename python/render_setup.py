@@ -72,14 +72,16 @@ def configureDenoising():
     for aov in denoised_aovs:
         if aov in aov_dict:
             node = aov_dict[aov]
-            print("Configuring denoising for AOV %s (node %s)"%(aov, node))
-            # Add new output driver
-            cmd.connectAttr("defaultArnoldDriver.message", node + ".outputs[1].driver")
-            # Add new AOV filter and set type to "variance"
-            variance_filter = cmd.createNode("aiAOVFilter")
-            cmd.setAttr(variance_filter + ".ai_translator", "variance", type="string")
-            # NOTE: Maybe the same variance_filter node could be used for all the AOVs
-            cmd.connectAttr(variance_filter + ".message", node + ".outputs[1].filter")
+            conns = cmd.listConnections(node + ".outputs")
+            if len(conns) <= 2 :    # Detect whether the variance filter has already been added because outputs have 4 connections instead of 2
+                print("Configuring denoising for AOV %s (node %s)"%(aov, node))
+                # Add new output driver
+                cmd.connectAttr("defaultArnoldDriver.message", node + ".outputs[1].driver")
+                # Add new AOV filter and set type to "variance"
+                variance_filter = cmd.createNode("aiAOVFilter")
+                cmd.setAttr(variance_filter + ".ai_translator", "variance", type="string")
+                # NOTE: Maybe the same variance_filter node could be used for all the AOVs
+                cmd.connectAttr(variance_filter + ".message", node + ".outputs[1].filter")
 
     # NOTE: All these AOVs should be passed to noice as "light group AOVs" in denoising script (outside Maya)
 
