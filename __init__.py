@@ -1,1 +1,1 @@
-import python
+from . import python
