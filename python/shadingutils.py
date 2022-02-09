@@ -139,3 +139,83 @@ def reassignMaterials():
         shape = cmd.listRelatives(t, shapes=True, fullPath=True)
         all_shape_instances = cmd.ls(shape, allPaths=True)
         reassignPerFaceMaterialsToInstances(t, shape, all_shape_instances)
+
+
+        import maya.cmds as cmds
+
+
+###############################################################################
+#
+#    Create a new shader (and shading group) of type shaderType and with
+#    name nodeName
+#
+#    Returns shader name and SG name
+#
+###############################################################################
+def createShader(shaderType, nodeName):
+    shaderName = cmds.shadingNode(shaderType, asShader=True, name=nodeName)
+    sgName = cmds.sets(renderable=True, noSurfaceShader=True, empty=True, name=(shaderName + "SG"))
+    cmds.connectAttr(shaderName + ".outColor", sgName + ".surfaceShader")
+    return (shaderName, sgName)
+
+###############################################################################
+#
+#    Create a new shader of type newShaderType, apply it to all elements where
+#    existingShader is currently applied, then copy attributes from 
+#    existingShader to the new shader (currently only .baseColor)
+#    The node name of the new shader will be the original one with suffix
+#    appended to it
+#
+#    This code was originally written to convert aiStandardSurface to aiToon
+#    so this is the only cased that has been tested
+#
+#    NOTE: The original shaders are kept. If you want to remove them, use
+#    Edit > Delete Unused Nodes in the Hypershade menu
+#
+###############################################################################
+def convertShader(existingShader, newShaderType, suffix):
+    shader_node = cmds.ls(existingShader)
+    if ( shader_node ):
+        shader_node = shader_node[0]
+    
+    node_type = cmds.nodeType(shader_node)
+    if node_type != "aiStandardSurface":
+        cmds.error("WRONG node type: %s - should be aiStandardSurface"%node_type)
+        return
+
+    SGs = cmds.listConnections(shader_node, type="shadingEngine")
+    if len(SGs) > 1:
+        cmds.error("The material is applied to more than one Shading Group")
+        return
+
+    # Query geometry with original shaders applied    
+    geo = cmds.listConnections(SGs, type="mesh")
+
+    new_node_name = shader_node + suffix
+    created_nodes = createShader(newShaderType, new_node_name)
+    new_node_name = created_nodes[0]
+    new_SG_name = created_nodes[1]
+
+    # Adding geometry to new SG
+    cmds.select(geo)
+    cmds.sets( e=True, forceElement=new_SG_name)
+
+    # Transfer shader attributes from aiStandardSurface to aiToon
+    # Add all attributes and correspondences you need. Only base color is
+    # copied in this example
+    
+    cmds.setAttr(new_node_name + ".baseColorR", cmds.getAttr(shader_node+".baseColorR"))
+    cmds.setAttr(new_node_name + ".baseColorG", cmds.getAttr(shader_node+".baseColorG"))
+    cmds.setAttr(new_node_name + ".baseColorB", cmds.getAttr(shader_node+".baseColorB"))
+
+
+###############################################################################
+#
+#    Replace all aiStandarSurfaces materials in the scene to aiToon, keeping
+#    the original baseColor
+#
+###############################################################################
+def convertAllAiStandardSurfaceToAiToon():
+    SGs = cmds.ls(type="aiStandardSurface")
+    for sg in SGs:
+        convertShader(sg, "aiToon", "Toon")
