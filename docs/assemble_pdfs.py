@@ -5,22 +5,21 @@ from PyPDF2 import PdfFileMerger
 import os
 import sys
 
+search_dir = "."
+target_doc = "assembled.pdf"
+
 if len(sys.argv) > 1:
     search_dir = sys.argv[1]
-else:
-    search_dir = "."
+
+if len(sys.argv) > 2:
+    target_doc = sys.argv[2]
 
 merger = PdfFileMerger()
 
 for root, dirs, files in os.walk(search_dir):
     for file in files:
         if file.endswith(".pdf"):
-             #pdfs.append( os.path.join(root, file)) )
              merger.append( os.path.join(root, file) )
 
-
-#for pdf in pdfs:
-#    merger.append(pdf)
-
-merger.write("storyboard.pdf")
+merger.write(target_doc)
 merger.close()
