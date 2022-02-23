@@ -88,11 +88,13 @@ def createInfoWindow(published_versions=[]):
         readProjectsFromDir()
 
     def presentCallback( *pArgs ):
+        return # This button is disabled
         cmd.file(newFile=True, force=True)
         scenes = cmd.textScrollList( scene_list, q=True, allItems=True)
         cdavtools.python.presenter.present(scenes)
 
     def statsAllCallback( *pArgs ):
+        return # This button is disabled
         # Scene paths are set in a file to avoid huge command lines
         list_file = cfg_tmp_dir + "/files_list.txt"
         cmd_line = scene_checker + " -o " + cfg_tmp_dir + " -f " + list_file
@@ -107,6 +109,7 @@ def createInfoWindow(published_versions=[]):
                 os.startfile(cfg_tmp_dir + "/report.csv")
 
     def statsSelectedCallback( *pArgs ):
+        return # This button is disabled
         cmd_line = scene_checker + " -o " + cfg_tmp_dir + " -i"
         selected = cmd.textScrollList( scene_list, query=True, selectItem=True )
         if selected:
