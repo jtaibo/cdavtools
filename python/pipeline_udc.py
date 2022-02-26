@@ -131,9 +131,12 @@ class Asset:
     def getWorkingVersionsPaths(self, dptType, dptTask):
         if self.inLibrary:
             pattern = self.project.projPath + "/02_prod/assets/99_library/" + self.project.projID + "_" + assetTypeAbbr[self.assetType] + "_" + self.assetID + "/" + dptDirs[dptType] + "/00_working/" + self.project.projID + "_" + assetTypeAbbr[self.assetType] + "_" + dptTasks[dptType][dptTask] + "_" + self.assetID + "_v??_???*.mb"
+            pattern2 = self.project.projPath + "/02_prod/assets/99_library/" + self.project.projID + "_" + assetTypeAbbr[self.assetType] + "_" + self.assetID + "/" + dptDirs[dptType] + "/00_working/" + self.project.projID + "_" + assetTypeAbbr[self.assetType] + "_" + dptTasks[dptType][dptTask] + "_" + self.assetID + "_v??.????.mb"
         else:
             pattern = self.project.projPath + "/02_prod/assets/" + assetTypeDirs[self.assetType] + "/" + self.project.projID + "_" + assetTypeAbbr[self.assetType] + "_" + self.assetID + "/" + dptDirs[dptType] + "/00_working/" + self.project.projID + "_" + assetTypeAbbr[self.assetType] + "_" + dptTasks[dptType][dptTask] + "_" + self.assetID + "_v??_???*.mb"
+            pattern2 = self.project.projPath + "/02_prod/assets/" + assetTypeDirs[self.assetType] + "/" + self.project.projID + "_" + assetTypeAbbr[self.assetType] + "_" + self.assetID + "/" + dptDirs[dptType] + "/00_working/" + self.project.projID + "_" + assetTypeAbbr[self.assetType] + "_" + dptTasks[dptType][dptTask] + "_" + self.assetID + "_v??.????.mb"
         files = glob.glob(pattern)
+        files.extend( glob.glob(pattern2))
         return files
 
     # Get absolute path for last working version
