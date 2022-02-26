@@ -92,6 +92,12 @@ def createInfoWindow(published_versions=[]):
     def searchProjectsCallback( *pArgs ):
         readProjectsFromDir()
 
+    def openFolderCallback( *pArgs ):
+        selected_idx = cmd.textScrollList( scene_list, query=True, selectIndexedItem=True )
+        if selected_idx:
+            selected = fullpath_scene_list[selected_idx[0]-1] # warning: 0-based vs 1-based indices
+            os.startfile( os.path.dirname(selected) )
+
     def presentCallback( *pArgs ):
         return # This button is disabled
         cmd.file(newFile=True, force=True)
@@ -184,12 +190,13 @@ def createInfoWindow(published_versions=[]):
     cmd.separator( h=10, style="none" )
 
     #cmd.rowColumnLayout(numberOfColumns=3, columnWidth=[ (1,120), (2, 120), (3, 120) ], columnOffset=[ (1, "right", 2), (2, "right", 3) ] )
-    cmd.rowColumnLayout(numberOfColumns=5)
+    cmd.rowColumnLayout(numberOfColumns=6)
     button_width = 100
     cmd.button( label = "Search directory", command=searchProjectsCallback, width=button_width )
     cmd.button( label = "Present all", command=presentCallback, width=button_width )
     cmd.button( label = "Stats all", command=statsAllCallback, width=button_width )
     cmd.button( label = "Stats selected", command=statsSelectedCallback, width=button_width )
+    cmd.button( label = "Open folder", command=openFolderCallback, width=button_width )
     cmd.button( label="Cancel", command=cancelCallback, width=button_width )
     cmd.setParent("..")
     
