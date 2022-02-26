@@ -11,6 +11,7 @@ cfg_tmp_dir = "X:/ENTREGAS/Mod1"
 
 # UI elements
 scene_list = ""
+fullpath_scene_list = []
 console_window = ""
 project_sel = ""
 assetType_sel = ""
@@ -23,6 +24,7 @@ last_checkbox = ""
 library_checkbox = ""
 everything_checkbox = ""
 console_window = ""
+path_mode = ""
 
 # Project info
 projects = []
@@ -36,6 +38,7 @@ projects = []
 def createInfoWindow(published_versions=[]):
    
     global scene_list
+    global fullpath_scene_list
     global project_sel
     global assetType_sel
     global asset_sel
@@ -47,6 +50,7 @@ def createInfoWindow(published_versions=[]):
     global library_checkbox
     global everything_checkbox
     global console_window
+    global path_mode
 
     windowTitle = "CDAV-UDC Pipeline Management System"
 
@@ -69,9 +73,10 @@ def createInfoWindow(published_versions=[]):
 
     def openCallback( *pArgs ):        
         # Open selected scene
-        #selected_idx = cmd.textScrollList( scene_list, query=True, selectIndexedItem=True )
-        selected = cmd.textScrollList( scene_list, query=True, selectItem=True )
-        scene_path = selected[0]
+        #selected = cmd.textScrollList( scene_list, query=True, selectItem=True )
+        selected_idx = cmd.textScrollList( scene_list, query=True, selectIndexedItem=True )
+        if selected_idx:
+            scene_path = fullpath_scene_list[selected_idx[0]-1] # warning: 0-based vs 1-based indices
 
         # WARNING!!! Set project has previously done IF AND ONLY IF a project is selected in the Projects selector
         # If no project selected, we do the "set project" here, searching a 02_prod directory with a workspace.mel inside
@@ -90,18 +95,16 @@ def createInfoWindow(published_versions=[]):
     def presentCallback( *pArgs ):
         return # This button is disabled
         cmd.file(newFile=True, force=True)
-        scenes = cmd.textScrollList( scene_list, q=True, allItems=True)
-        cdavtools.python.presenter.present(scenes)
+        cdavtools.python.presenter.present(fullpath_scene_list)
 
     def statsAllCallback( *pArgs ):
         return # This button is disabled
         # Scene paths are set in a file to avoid huge command lines
         list_file = cfg_tmp_dir + "/files_list.txt"
         cmd_line = scene_checker + " -o " + cfg_tmp_dir + " -f " + list_file
-        selected = cmd.textScrollList( scene_list, query=True, allItems=True )
-        if selected:
+        if fullpath_scene_list:
             with open(list_file, 'w') as filehandle:
-                for s in selected:
+                for s in fullpath_scene_list:
                     filehandle.write("%s\n" % s)
                 filehandle.close()
                 os.system(cmd_line)
@@ -111,7 +114,9 @@ def createInfoWindow(published_versions=[]):
     def statsSelectedCallback( *pArgs ):
         return # This button is disabled
         cmd_line = scene_checker + " -o " + cfg_tmp_dir + " -i"
-        selected = cmd.textScrollList( scene_list, query=True, selectItem=True )
+        selected_idx = cmd.textScrollList( scene_list, query=True, selectIndexedItem=True )
+        if selected_idx:
+            selected = fullpath_scene_list[selected_idx[0]-1] # warning: 0-based vs 1-based indices
         if selected:
             cmd_line += " \"" + selected[0] + "\""
             #print("cmd_line = ", cmd_line)
@@ -152,6 +157,9 @@ def createInfoWindow(published_versions=[]):
     def everythingCheckCallback( *pArgs ):
         updateScenesList()
 
+    def selectPathModeCallback( *pArgs ):
+        updateScenesList()
+
     project_sel = cmd.optionMenu( label = "Projects", changeCommand=selectProjectCallback )
     assetType_sel = cmd.optionMenu( label = "Asset types", changeCommand=selectAssetTypeCallback )
     populateAssetTypes()
@@ -160,6 +168,8 @@ def createInfoWindow(published_versions=[]):
     populateDepartments()
     task_sel = cmd.optionMenu( label = "Task", changeCommand=selectTaskCallback )
     populateTasks()
+    path_mode = cmd.optionMenu( label = "Path mode", changeCommand=selectPathModeCallback)
+    populatePathModes()
 
     cmd.rowColumnLayout(numberOfColumns=5)
     published_checkbox = cmd.checkBox(label="Published", changeCommand=publishedCheckCallback, value=True)
@@ -243,6 +253,19 @@ def populateTasks():
     cmd.menuItem( "* - All", parent = task_sel )
     for task in tasks:
         cmd.menuItem( task, parent = task_sel )
+
+###############################################################################
+#
+#
+#
+###############################################################################
+def populatePathModes():
+    items = cmd.optionMenu(path_mode, query=True, itemListLong=True)
+    if items:
+        cmd.deleteUI(items, menuItem=True)
+    cmd.menuItem( "Full path", parent = path_mode)
+    cmd.menuItem( "In-project path", parent = path_mode)
+    cmd.menuItem( "File name", parent = path_mode)
 
 
 ###############################################################################
@@ -347,6 +370,8 @@ def addProjAssets(proj, assets):
 def updateScenesList():
     cmd.textScrollList( scene_list, edit=True, removeAll=True)
     scenes = []
+    global fullpath_scene_list
+    full_path_scene_list = []
     
     selected_project_idx = cmd.optionMenu(project_sel, query=True, select=True)
     everything = cmd.checkBox(everything_checkbox, query=True, value=True)
@@ -359,15 +384,29 @@ def updateScenesList():
         # Include all projects
         for p in projects:
             if everything:
-                scenes += cdavtools.python.miscutils.selectScenesInDirectory( p[1], every_scene_extensions )
+                fullpath_scene_list += cdavtools.python.miscutils.selectScenesInDirectory( p[1], every_scene_extensions )
             else:
-                addScenesForProject(p, scenes)
+                addScenesForProject(p, fullpath_scene_list)
     else:
         p = projects[selected_project_idx-2]
         if everything:
-            scenes += cdavtools.python.miscutils.selectScenesInDirectory( p[1], every_scene_extensions )
+            fullpath_scene_list += cdavtools.python.miscutils.selectScenesInDirectory( p[1], every_scene_extensions )
         else:
-            addScenesForProject(p, scenes)
+            addScenesForProject(p, fullpath_scene_list)
+
+    # Filter scene names
+    path_mode_idx = cmd.optionMenu(path_mode, query=True, select=True)
+    if path_mode_idx == 1:  # Full path
+        scenes = fullpath_scene_list
+        pass
+    elif path_mode_idx == 2: # In-project path
+        for s in fullpath_scene_list:
+            proj_path = cdavtools.python.pipeline_udc.getProjectForScene(s)
+            maya_proj_path = proj_path + "/02_prod"
+            scenes.append( os.path.relpath(s, maya_proj_path) )
+    elif path_mode_idx == 3: # File name
+        for s in fullpath_scene_list:
+            scenes.append( os.path.basename(s) )
     
     selected_idx = cmd.textScrollList( scene_list, edit=True, append=scenes )
 
