@@ -378,7 +378,7 @@ def updateScenesList():
     cmd.textScrollList( scene_list, edit=True, removeAll=True)
     scenes = []
     global fullpath_scene_list
-    full_path_scene_list = []
+    fullpath_scene_list = []
     
     selected_project_idx = cmd.optionMenu(project_sel, query=True, select=True)
     everything = cmd.checkBox(everything_checkbox, query=True, value=True)
