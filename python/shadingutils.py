@@ -219,3 +219,29 @@ def convertAllAiStandardSurfaceToAiToon():
     SGs = cmds.ls(type="aiStandardSurface")
     for sg in SGs:
         convertShader(sg, "aiToon", "Toon")
+
+
+###############################################################################
+#
+#    Convert file texture color spaces from old OCIO 1 configuration
+#    to new OCIO 2 Maya 2022+ configuration (default color management)
+#
+###############################################################################
+def convertOCIOColorSpaces():
+    cs_translations = {
+        "Utility - sRGB - Texture": "sRGB",
+        "Utility - Raw": "Raw",
+        "Utility - Linear - sRGB": "scene-linear Rec.709-sRGB",
+        "ACES - ACES2065-1": "Raw"
+        # TO-DO: add more conversions as needed
+        }
+    available_color_spaces = cmd.colorManagementPrefs(query=True, inputSpaceNames=True)
+    filetextures = cmd.ls(type="file")
+    for f in filetextures:
+        cs = cmd.getAttr(f + ".colorSpace")
+        if cs not in available_color_spaces:
+            if cs in cs_translations:
+                #print("There is a translation for this cs %s"%cs)
+                cmd.setAttr(f + ".colorSpace", cs_translations[cs], type="string")
+            else:
+                print("Color space %s unknown (no translation)"%cs)
