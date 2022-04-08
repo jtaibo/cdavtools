@@ -3,7 +3,7 @@ call env.bat
 
 REM set SCENE="scenes/AJX_pr_3Dcembro_aref_anim01_tk04.mb"
 
-REM set LOG=-ai:ltc true -ai:lve 2
+set LOG=-ai:ltc true -ai:lve 2
 REM -ai:lfn %PROJ_DIR%/render.log
 
 REM %MAYA_BIN%\Render.exe -proj %PROJ_DIR% -r arnold %LOG% %SCENE%
@@ -27,11 +27,11 @@ REM To render several scenes one after the other, just create one line for each
 REM in this script. When one render finishes, the next one will start.
 REM Example below (replace scene path to your real scenes)
 
-%MAYA_BIN%\Render.exe -proj %PROJ_DIR% scenes/first_scene_to_render.mb
-%MAYA_BIN%\Render.exe -proj %PROJ_DIR% scenes/second_scene_to_render.mb
-%MAYA_BIN%\Render.exe -proj %PROJ_DIR% scenes/third_scene_to_render.mb
-%MAYA_BIN%\Render.exe -proj %PROJ_DIR% scenes/fourth_scene_to_render.mb
-%MAYA_BIN%\Render.exe -proj %PROJ_DIR% scenes/fifth_scene_to_render.mb
+%MAYA_BIN%\Render.exe -r arnold %LOG% -proj %PROJ_DIR% scenes/first_scene_to_render.mb
+%MAYA_BIN%\Render.exe -r arnold %LOG% -proj %PROJ_DIR% scenes/second_scene_to_render.mb
+%MAYA_BIN%\Render.exe -r arnold %LOG% -proj %PROJ_DIR% scenes/third_scene_to_render.mb
+%MAYA_BIN%\Render.exe -r arnold %LOG% -proj %PROJ_DIR% scenes/fourth_scene_to_render.mb
+%MAYA_BIN%\Render.exe -r arnold %LOG% -proj %PROJ_DIR% scenes/fifth_scene_to_render.mb
 
 REM Keep the console open after finishing so we can read the output
 pause
