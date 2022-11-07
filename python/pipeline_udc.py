@@ -18,7 +18,8 @@ assetTypeDirsLibrary = [ "00_lbcharacters", "01_lbprops", "02_lbsets", "03_lbcam
 
 # Pipeline stages or departments
 dptDirs = [ "00_modeling", "01_rigging", "02_cloth", "03_hair", "04_shading", "05_lighting", "06_fx" ]
-dptTasks = [ ["modlp", "modhp", "modsc", "modbs"], ["anim", "layout", "rig"], ["cloth"], ["hair"], ["shd"], ["lkdv", "lgt"], ["fx"] ]
+#dptTasks = [ ["modlp", "modhp", "modsc", "modbs"], ["anim", "layout", "rig"], ["cloth"], ["hair"], ["shd"], ["lkdv", "lgt"], ["fx"] ]
+dptTasks = [ ["mlp", "mhp", "msc", "mbs"], ["anim", "layout", "rig"], ["cloth"], ["hair"], ["shd"], ["lkdv", "lgt"], ["fx"] ]
 
 imgPlanePos = [ "imgPlaneFr", "imgPlaneBk", "imgPlaneLf", "imgPlaneRg", "imgPlaneTp", "imgPlaneBt" ]
 
@@ -27,11 +28,12 @@ taskRenamingSuggestions = {
    "lighting": "lgt",
    "lights": "lgt",
    "lookdev": "lkdv",
-   "mod": "modhp",
-   "mlp": "modlp",
-   "mhp": "modhp",
-   "msc": "modsc",
-   "bls": "modbs"
+   "mod": "mhp",
+   "modlp": "mlp",
+   "modhp": "mhp",
+   "modsc": "msc",
+   "modbs": "mbs",
+   "bls": "mbs"
    }
 
 prodDirs = ["00_layout", "01_animation", "02_cache", "03_fx", "04_lighting", "05_rendering"]
