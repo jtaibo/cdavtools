@@ -14,7 +14,8 @@ import maya.cmds as cmd
 
 aov_dict = {}
 component_aovs = [ "diffuse", "specular" ]
-denoised_aovs = [ "diffuse", "specular" ] # TO-DO (NOTE: include only "color" AOVs, not other information)
+# WARNING: Do not use the array denoised_aovs below (work in progress...)
+denoised_aovs = [  ] # TO-DO (NOTE: include only "color" AOVs, not other information)
 
 
 ################################################################################
@@ -34,6 +35,20 @@ def addCryptomatteAOVs():
     for a in crypto_aovs:
         if a not in aov_dict:
             mtoa.aovs.AOVInterface().addAOV(a, aovShader="cryptomatte" )
+
+
+################################################################################
+#
+#
+def addAmbientOcclusionAOV():
+    ao_aov_name = "ambient_occlusion"
+    if ao_aov_name not in aov_dict:
+        ao_aov = mtoa.aovs.AOVInterface().addAOV(ao_aov_name, aovShader="aiAmbientOcclusion" )
+        shader = cmd.listConnections(ao_aov.node+".defaultValue")[0]
+        cmd.setAttr(shader+".samples", 3)
+        cmd.setAttr(shader+".spread", 1.0)
+        cmd.setAttr(shader+".nearClip", 0.0)
+        cmd.setAttr(shader+".farClip", 100.0)
 
 
 ################################################################################
@@ -93,6 +108,7 @@ def configureAOVs():
     addCryptomatteAOVs()
     addStandardAOV("Z")
     addMotionVectorsAOV()
+    addAmbientOcclusionAOV()
     for n in component_aovs:
         addStandardAOV(n)
     configureDenoising()
