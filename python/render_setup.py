@@ -14,8 +14,9 @@ import maya.cmds as cmd
 
 aov_dict = {}
 component_aovs = [ "diffuse", "specular" ]
-# WARNING: Do not use the array denoised_aovs below (work in progress...)
-denoised_aovs = [  ] # TO-DO (NOTE: include only "color" AOVs, not other information)
+# WARNING: Denoised AOVs work only in Render Sequence / Batch Render. They will fail in interactive RenderView
+# https://forums.autodesk.com/t5/arnold-for-maya-forum/interactive-render-aborts-when-more-than-1-aov-output-driver-is/td-p/12245751
+denoised_aovs = [ "diffuse", "specular" ] # NOTE: include only "color" AOVs, not other information
 
 
 ################################################################################
