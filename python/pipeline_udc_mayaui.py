@@ -409,8 +409,9 @@ def updateScenesList():
     elif path_mode_idx == 2: # In-project path
         for s in fullpath_scene_list:
             proj_path = cdavtools.python.pipeline_udc.getProjectForScene(s)
-            maya_proj_path = proj_path + "/02_prod"
-            scenes.append( os.path.relpath(s, maya_proj_path) )
+            if(proj_path):
+                maya_proj_path = proj_path + "/02_prod"
+                scenes.append( os.path.relpath(s, maya_proj_path) )
     elif path_mode_idx == 3: # File name
         for s in fullpath_scene_list:
             scenes.append( os.path.basename(s) )
