@@ -19,7 +19,7 @@ assetTypeDirsLibrary = [ "00_lbcharacters", "01_lbprops", "02_lbsets", "03_lbcam
 # Pipeline stages or departments
 dptDirs = [ "00_modeling", "01_rigging", "02_cloth", "03_hair", "04_shading", "05_lighting", "06_fx" ]
 #dptTasks = [ ["modlp", "modhp", "modsc", "modbs"], ["anim", "layout", "rig"], ["cloth"], ["hair"], ["shd"], ["lkdv", "lgt"], ["fx"] ]
-dptTasks = [ ["mlp", "mhp", "msc", "mbs"], ["anim", "layout", "rig"], ["cloth"], ["hair"], ["shd"], ["lkdv", "lgt"], ["fx"] ]
+dptTasks = [ ["mlp", "mhp", "mmp", "msc", "mbs"], ["anim", "layout", "rig"], ["cloth"], ["hair"], ["shd"], ["lkdv", "lgt"], ["fx"] ]
 
 imgPlanePos = [ "imgPlaneFr", "imgPlaneBk", "imgPlaneLf", "imgPlaneRg", "imgPlaneTp", "imgPlaneBt" ]
 
